@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <iostream>
-#include "FloatGrid3D.hpp"
-#include <glm\glm.hpp>
+#include "main.hpp"
 
 int main(int argc, char *argv[]) {
     std::cout << "Hello, world!\n";
