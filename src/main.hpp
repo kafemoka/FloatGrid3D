@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <iostream>
-#include "FloatGrid3D.hpp"
+#include "FloatGrid3D.h"
 #include <glm\glm.hpp>
 
 int main(int argc, char *argv[]) {

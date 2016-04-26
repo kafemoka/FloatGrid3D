@@ -1,7 +1,8 @@
-add_library (Grid3D
-  FloatGrid3D.h
-  FloatGrid3D.cpp
-  main.cpp
-  )
+set(SOURCE_FILES
+    "FloatGrid3D.hpp"
+    "FloatGrid3D.cpp"
+    )
 
-install (TARGETS Grid3D DESTINATION bin)
+add_library(src
+    ${SOURCE_FILES}
+    )
