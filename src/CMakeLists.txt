@@ -1,5 +1,7 @@
-add_library (Main 
-  main.cpp)
+add_library (Grid3D
+  FloatGrid3D.h
+  FloatGrid3D.cpp
+  main.cpp
+  )
 
-install (TARGETS Main DESTINATION bin)
-#install (FILES Speaker.h DESTINATION include) # for headers
+install (TARGETS Grid3D DESTINATION bin)
