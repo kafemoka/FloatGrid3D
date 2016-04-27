@@ -3,6 +3,8 @@
 
 #include <glm\glm.hpp>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 class FloatGrid3D {
 public:
@@ -35,6 +37,8 @@ public:
 	bool setCell(int x, int y, int z, float val); // access the cell at x, y, z
 	bool setByCoordinate(float x, float y, float z, float val); // access cell by coordinate
 	bool trilinear(float x, float y, float z, float &ret); // trilinear interpolation
+
+	void exportToFile(std::string filename);
 };
 
 #endif

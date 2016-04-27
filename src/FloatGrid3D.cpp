@@ -9,9 +9,9 @@ FloatGrid3D::FloatGrid3D(int resX, int resY, int resZ,
 	m_max = glm::vec3(maxX, maxY, maxZ);
 	m_numCells = resX * resY * resZ;
 	m_cells.resize(m_numCells);
-	m_cellWidth.x = maxX - minX / (float)resX;
-	m_cellWidth.y = maxY - minY / (float)resY;
-	m_cellWidth.z = maxZ - minZ / (float)resZ;
+	m_cellWidth.x = (maxX - minX) / (float)resX;
+	m_cellWidth.y = (maxY - minY) / (float)resY;
+	m_cellWidth.z = (maxZ - minZ) / (float)resZ;
 
 }
 
@@ -45,9 +45,9 @@ void FloatGrid3D::coordToIDX(float x, float y, float z,
 	int &ix, int &iy, int &iz) {
 
 	// compute the IDX that is to the bottom left of the given coordinate
-	ix = (x - m_min.x) / (float)m_res.x;
-	iy = (y - m_min.y) / (float)m_res.y;
-	iz = (z - m_min.z) / (float)m_res.z;
+	ix = (x - m_min.x) / (float)m_cellWidth.x;
+	iy = (y - m_min.y) / (float)m_cellWidth.y;
+	iz = (z - m_min.z) / (float)m_cellWidth.z;
 }
 
 void FloatGrid3D::idxToCoord(int ix, int iy, int iz,
@@ -69,7 +69,7 @@ void FloatGrid3D::clear(float val) {
 float FloatGrid3D::getCell(int x, int y, int z) {
 
 	int idx = threeDto1D(x, y, z);
-	if (idx > 0 && idx < m_numCells) {
+	if (idx >= 0 && idx < m_numCells) {
 		return m_cells[idx];
 	}
 	return -HUGE_VAL;
@@ -172,15 +172,30 @@ bool FloatGrid3D::trilinear(float x, float y, float z, float &ret) {
 	// we'll do some reuse here to avoid adding stuff on the stack
 
 	// lerp by z
-	A = lerp(z, fminZ, fmaxZ, A, D);
-	E = lerp(z, fminZ, fmaxZ, E, H);
-	B = lerp(z, fminZ, fmaxZ, B, C);
-	F = lerp(z, fminZ, fmaxZ, F, G);
+	A = lerp(z, fminZ, fmaxZ, D, A);
+	E = lerp(z, fminZ, fmaxZ, H, E);
+	B = lerp(z, fminZ, fmaxZ, C, B);
+	F = lerp(z, fminZ, fmaxZ, G, F);
 
 	// lerp by y
 	F = lerp(y, fminY, fmaxY, F, B);
-	A = lerp(y, fminY, fmaxY, A, E);
+	A = lerp(y, fminY, fmaxY, E, A);
 
-	ret = lerp(x, fminX, fmaxX, F, A);
+	ret = lerp(x, fminX, fmaxX, A, F);
 	return true;
+}
+
+void FloatGrid3D::exportToFile(std::string filename) {
+	std::ofstream file;
+	file.open(filename);
+	float fx, fy, fz;
+	for (int x = 0; x < m_res.x; x++) {
+		for (int y = 0; y < m_res.y; y++) {
+			for (int z = 0; z < m_res.z; z++) {
+				idxToCoord(x, y, z, fx, fy, fz);
+				file << fx << " " << fy << " " << fz << " " << getCell(x, y, z) << "\n";
+			}
+		}
+	}
+	file.close();
 }
