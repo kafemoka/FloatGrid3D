@@ -104,9 +104,8 @@ bool FloatGrid3D::setByCoordinate(float x, float y, float z, float val) {
 	return true;
 }
 
-float lerp(float p, float pA, float pB, float valA, float valB) {
+float lerp(float t, float valA, float valB) {
 
-	float t = (p - pA) / (pB - pA);
 	return (1.0f - t)*valA + t*valB; // more precise, according to wikipedia
 }
 
@@ -172,16 +171,19 @@ bool FloatGrid3D::trilinear(float x, float y, float z, float &ret) {
 	// we'll do some reuse here to avoid adding stuff on the stack
 
 	// lerp by z
-	A = lerp(z, fminZ, fmaxZ, D, A);
-	E = lerp(z, fminZ, fmaxZ, H, E);
-	B = lerp(z, fminZ, fmaxZ, C, B);
-	F = lerp(z, fminZ, fmaxZ, G, F);
+	float t = (z - fminZ) / (fmaxZ - fminZ);
+	A = lerp(t, D, A);
+	E = lerp(t, H, E);
+	B = lerp(t, C, B);
+	F = lerp(t, G, F);
 
 	// lerp by y
-	F = lerp(y, fminY, fmaxY, F, B);
-	A = lerp(y, fminY, fmaxY, E, A);
+	t = (y - fminY) / (fmaxY - fminY);
+	F = lerp(t, F, B);
+	A = lerp(t, E, A);
 
-	ret = lerp(x, fminX, fmaxX, A, F);
+	t = (x - fminX) / (fmaxX - fminX);
+	ret = lerp(t, A, F);
 	return true;
 }
 
